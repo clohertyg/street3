@@ -391,58 +391,48 @@ def summarize_neighborhoods(isj_sub):
 neighborhood_summary, street_summary = summarize_neighborhoods(isj_sub)
 print("Crime counts by each neighborhood in 'neighborhood_summary' dataframe.")
 
-# Saving to Files
+# monthly aggregates for each street
+monthly_street_counts = seg_time.groupby(['trans_id', 'year-month', 'year']).agg(
+    monthly_violent_count=('violent_count', 'sum'),
+    monthly_gun_poss_count=('gun_poss_count', 'sum'),
+    monthly_total_crimes=('total_crimes', 'sum'),
+    monthly_violent_arrests=('violent_arrests', 'sum'),
+    monthly_gun_poss_arrests=('gun_poss_arrests', 'sum'),
+    monthly_total_arrests=('total_arrests', 'sum') 
+).reset_index()
+print('Monthly counts by each street for violent and gun possession crimes and arrests in monthly_street_counts.')
 
-# seg
-seg = gpd.GeoDataFrame(seg, geometry='geometry', crs='EPSG:26916')
-seg_final = street.sjoin_nearest(seg, how = 'left')
-seg_final = seg_final.to_crs("EPSG:4326")
-
-sub = ['logiclf_right', 'pre_dir_right', 'street_nam_right', 'street_typ_right', 
-       'ward', 'beat', 'district', 'community', 'case_number','geometry', 'index_right', 'trans_id_right', 
-       'gun_count', 'gun_poss_count', 'robbery_count', 'violent_count', 'homicide_count', 'agg_assault_count',
-       'theft_count', 'viol_gun_count', 'total_crimes', 'gun_arrests', 'gun_poss_arrests', 'robbery_arrests', 
-       'violent_arrests', 'homicide_arrests', 'agg_assault_arrests', 'theft_arrests',
-       'total_arrests', 'gp_ar', 'vi_ar', 'total_ar']
-seg_final = seg_final[sub]
-seg_final.rename(columns={'logiclf_right':'logiclf', 
-                          'pre_dir_right': 'pre_dir', 'street_nam_right': 'street_nam', 
-                          'street_typ_right': 'street_typ', 'trans_id_right':'trans_id',
-                          'index_right':'index'},
-                 inplace = True)
-for col in seg_final.select_dtypes(include='object').columns:
-    seg_final[col] = seg_final[col].astype(str)
-
-seg_final.to_parquet('seg_summary.parquet')
-print("'seg' dataframe joined to street data and exported as parquet file.")
+# yearly count for each street
+yearly_street_counts = seg_time.groupby(['trans_id', 'year']).agg(
+    yearly_violent_count=('violent_count', 'sum'),
+    yearly_gun_poss_count=('gun_poss_count', 'sum'),
+    yearly_total_crimes=('total_crimes', 'sum'),
+    yearly_violent_arrests=('violent_arrests', 'sum'),
+    yearly_gun_poss_arrests=('gun_poss_arrests', 'sum'),
+    yearly_total_arrests=('total_arrests', 'sum') 
+).reset_index()
+print('Yearly counts by each street for violent and gun possession crimes and arrests in yearly_street_counts.')
 
 
-# seg_time
-seg_time = gpd.GeoDataFrame(seg_time, geometry='geometry', crs='EPSG:26916')
-street = street.to_crs(seg_time.crs) 
-seg_time_final = gpd.sjoin_nearest(seg_time, street, how='left')
-seg_time_final = seg_time_final.to_crs("EPSG:4326")
-
-sub = ['ward', 'beat', 'district', 'community', 'logiclf_right', 'pre_dir_right', 'street_nam_right',
-       'street_typ_right', 'case_number', 'geometry', 'index_right', 'trans_id_right', 'year-month', 'year',
-       'violent_count', 'gun_poss_count', 'total_crimes', 'gun_poss_arrests', 'violent_arrests',
-       'total_arrests', 'total_ar', 'vi_ar', 'gp_ar'
-]
-seg_time_final = seg_time_final[sub]
-seg_time_final.rename(columns={'logiclf_right':'logiclf', 
-                          'pre_dir_right': 'pre_dir', 'street_nam_right': 'street_nam', 
-                          'street_typ_right': 'street_typ', 'trans_id_right':'trans_id',
-                          'index_right':'index'},
-                 inplace = True)
-
-seg_time_final.to_parquet('seg_time.parquet')
-print("'seg_time' dataframe joined to street data and exported as parquet file.")
+# monthly count for ALL streets
+monthly_totals = seg_time.groupby(['year-month', 'year']).agg(
+    total_violent_count=('violent_count', 'sum'),
+    total_gun_poss_count=('gun_poss_count', 'sum'),
+    total_crimes=('total_crimes', 'sum'),
+    total_violent_arrests=('violent_arrests', 'sum'),
+    total_gun_poss_arrests=('gun_poss_arrests', 'sum'),
+    total_arrests=('total_arrests', 'sum')
+).reset_index()
+print('Monthly counts for all streets for violent and gun possession crimes and arrests in monthly_totals.')
 
 
-# neighborhood_summary
-neighborhood_summary = gpd.GeoDataFrame(neighborhood_summary, geometry='comm_geom', crs='EPSG:26916')
-neighborhood_summary.to_parquet('neighborhood_summary.parquet')
-print("'neighborhood_summary' dataframe joined to street data and exported as parquet file.")
-
-
-
+# yearly count for ALL streets
+yearly_totals = seg_time.groupby('year').agg(
+    total_violent_count=('violent_count', 'sum'),
+    total_gun_poss_count=('gun_poss_count', 'sum'),
+    total_crimes=('total_crimes', 'sum'),
+    total_violent_arrests=('violent_arrests', 'sum'),
+    total_gun_poss_arrests=('gun_poss_arrests', 'sum'),
+    total_arrests=('total_arrests', 'sum')
+).reset_index()
+print('Yearly counts for all streets for violent and gun possession crimes and arrests in yearly_totals.')
