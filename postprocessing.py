@@ -439,10 +439,10 @@ print('Yearly counts for all streets for violent and gun possession crimes and a
 
 # Exporting data
 
-monthly_street_counts.to_csv("r'C:\Users\clohe\Documents\street3\monthly_street_counts.csv'")
+monthly_street_counts.to_csv('monthly_street_counts.csv')
 print('monthly_street_counts exported to CSV file')
 
-yearly_street_counts.to_csv("r'C:\Users\clohe\Documents\street3\yearly_street_counts.csv'")
+yearly_street_counts.to_csv('yearly_street_counts.csv')
 print('yearly_street_counts exported to CSV file')
 
 monthly_totals.to_csv('monthly_totals.csv')
