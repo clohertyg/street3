@@ -436,3 +436,17 @@ yearly_totals = seg_time.groupby('year').agg(
     total_arrests=('total_arrests', 'sum')
 ).reset_index()
 print('Yearly counts for all streets for violent and gun possession crimes and arrests in yearly_totals.')
+
+# Exporting data
+
+monthly_street_counts.to_csv(r'C:\Users\clohe\Documents\street3\data\processed\monthly_street_counts.csv')
+print('monthly_street_counts exported to CSV file')
+
+yearly_street_counts.to_csv(r'C:\Users\clohe\Documents\street3\data\processed\yearly_street_counts.csv')
+print('yearly_street_counts exported to CSV file')
+
+monthly_totals.to_csv(r'C:\Users\clohe\Documents\street3\data\processed\monthly_totals.csv')
+print('monthly_totals exported to CSV file')
+
+yearly_totals.to_csv(r'C:\Users\clohe\Documents\street3\data\processed\yearly_totals.csv')
+print('monthly_totals exported to CSV file')
