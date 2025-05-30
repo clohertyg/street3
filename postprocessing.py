@@ -414,57 +414,32 @@ yearly_street_counts = seg_time.groupby(['trans_id', 'year']).agg(
 print('Yearly counts by each street for violent and gun possession crimes and arrests in yearly_street_counts.')
 
 
-# monthly count for ALL streets
-monthly_total_counts = seg_time.groupby(['year-month', 'year']).agg(
-    total_violent_count=('violent_count', 'sum'),
-    total_gun_poss_count=('gun_poss_count', 'sum')
-).reset_index()
-print('Monthly counts for all streets for violent and gun possession crimes in monthly_total_counts.')
 
 # monthly arrests for ALL streets
-monthly_total_arrests = seg_time.groupby(['year-month', 'year']).agg(
-    total_violent_arrests=('violent_arrests', 'sum'),
-    total_gun_poss_arrests=('gun_poss_arrests', 'sum')
-).reset_index()
-print('Monthly arrests for all streets for violent and gun possession arrests in monthly_total_arrests.')
-
-
-
-# yearly counts for ALL streets
-yearly_total_counts = seg_time.groupby('year').agg(
-    total_violent_count=('violent_count', 'sum'),
-    total_gun_poss_count=('gun_poss_count', 'sum')
-).reset_index()
-print('Yearly counts for all streets for violent and gun possession crimes in yearly_total_counts.')
-
-# yearly arrests for ALL streets
-yearly_total_arrests = seg_time.groupby('year').agg(
-    total_violent_arrests=('violent_arrests', 'sum'),
-    total_gun_poss_arrests=('gun_poss_arrests', 'sum')
-).reset_index()
-print('Yearly counts for all streets for violent and gun possession arrests in yearly_total_arrests.')
-
-# monthly arrest rate 
-monthly_ar = seg_time.groupby(['year-month', 'year']).agg(
+monthly_total = seg_time.groupby(['year-month', 'year']).agg(
     total_violent_count=('violent_count', 'sum'),
     total_gun_poss_count=('gun_poss_count', 'sum'),
     total_violent_arrests=('violent_arrests', 'sum'),
     total_gun_poss_arrests=('gun_poss_arrests', 'sum')
 ).reset_index()
-monthly_ar['vi_ar'] = monthly_ar['total_violent_arrests'] / monthly_ar['total_violent_count']
-monthly_ar['gp_ar'] = monthly_ar['total_gun_poss_arrests'] / monthly_ar['total_gun_poss_count']
-print('Monthly total arrest rates in monthly_ar')
+print('Monthly counts and arrests for all streets for violent and gun possession crimes in monthly_total.')
 
-yearly_ar = seg_time.groupby('year').agg(
+monthly_total['vi_ar'] = monthly_total['total_violent_arrests'] / monthly_total['total_violent_count']
+monthly_total['gp_ar'] = monthly_total['total_gun_poss_arrests'] / monthly_total['total_gun_poss_count']
+print('Monthly total arrest rates calculated in monthly_total.')
+
+
+# yearly for ALL streets
+yearly_total = seg_time.groupby('year').agg(
     total_violent_count=('violent_count', 'sum'),
     total_gun_poss_count=('gun_poss_count', 'sum'),
     total_violent_arrests=('violent_arrests', 'sum'),
     total_gun_poss_arrests=('gun_poss_arrests', 'sum')
 ).reset_index()
-yearly_ar['vi_ar'] = yearly_ar['total_violent_arrests'] / yearly_ar['total_violent_count']
-yearly_ar['gp_ar'] = yearly_ar['total_gun_poss_arrests'] / yearly_ar['total_gun_poss_count']
-print('Yearly total arrest rates in yearly_ar')
-
+print('Yearly counts and arrests for all streets for violent and gun possession crimes in yearly_total.')
+yearly_total['vi_ar'] = yearly_total['total_violent_arrests'] / yearly_total['total_violent_count']
+yearly_total['gp_ar'] = yearly_total['total_gun_poss_arrests'] / yearly_total['total_gun_poss_count']
+print('Yearly total arrest rates calculated in yearly_total')
 
 
 # Exporting data
@@ -475,20 +450,8 @@ print('monthly_street_counts exported to CSV file')
 yearly_street_counts.to_csv('data/yearly_street_counts.csv')
 print('yearly_street_counts exported to CSV file')
 
-monthly_total_counts.to_csv('data/monthly_total_counts.csv')
-print('monthly_total_counts exported to CSV file')
+monthly_total.to_csv('data/monthly_total.csv')
+print('monthly_total exported to CSV file')
 
-monthly_total_arrests.to_csv('data/monthly_total_arrests.csv')
-print('monthly_total_arrests exported to CSV file')
-
-yearly_total_counts.to_csv('data/yearly_total_counts.csv')
+yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
-
-yearly_total_arrests.to_csv('data/yearly_total_arrests.csv')
-print('yearly_total_arrests exported to CSV file')
-
-monthly_ar.to_csv('data/monthly_ar.csv')
-print('monthly_ar exported to csv file')
-
-yearly_ar.to_csv('data/yearly_ar.csv')
-print('yearly_ar exported to csv file')
