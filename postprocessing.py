@@ -424,8 +424,8 @@ monthly_total = seg_time.groupby(['year-month', 'year']).agg(
 ).reset_index()
 print('Monthly counts and arrests for all streets for violent and gun possession crimes in monthly_total.')
 
-monthly_total['vi_ar'] = monthly_total['total_violent_arrests'] / monthly_total['total_violent_count']
-monthly_total['gp_ar'] = monthly_total['total_gun_poss_arrests'] / monthly_total['total_gun_poss_count']
+monthly_total['vi_ar'] = round((monthly_total['total_violent_arrests'] / monthly_total['total_violent_count'])*100, 2)
+monthly_total['gp_ar'] = round((monthly_total['total_gun_poss_arrests'] / monthly_total['total_gun_poss_count'])*100, 2)
 print('Monthly total arrest rates calculated in monthly_total.')
 
 
@@ -437,8 +437,8 @@ yearly_total = seg_time.groupby('year').agg(
     total_gun_poss_arrests=('gun_poss_arrests', 'sum')
 ).reset_index()
 print('Yearly counts and arrests for all streets for violent and gun possession crimes in yearly_total.')
-yearly_total['vi_ar'] = yearly_total['total_violent_arrests'] / yearly_total['total_violent_count']
-yearly_total['gp_ar'] = yearly_total['total_gun_poss_arrests'] / yearly_total['total_gun_poss_count']
+yearly_total['vi_ar'] = round((yearly_total['total_violent_arrests'] / yearly_total['total_violent_count']) * 100, 2)
+yearly_total['gp_ar'] = round((yearly_total['total_gun_poss_arrests'] / yearly_total['total_gun_poss_count']) * 100, 2)
 print('Yearly total arrest rates calculated in yearly_total')
 
 
