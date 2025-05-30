@@ -444,11 +444,11 @@ print('Yearly total arrest rates calculated in yearly_total')
 
 # Exporting data
 
-monthly_street_counts.to_csv('data/monthly_street_counts.csv')
-print('monthly_street_counts exported to CSV file')
+# monthly_street_counts.to_csv('data/monthly_street_counts.csv')
+# print('monthly_street_counts exported to CSV file')
 
-yearly_street_counts.to_csv('data/yearly_street_counts.csv')
-print('yearly_street_counts exported to CSV file')
+# yearly_street_counts.to_csv('data/yearly_street_counts.csv')
+# print('yearly_street_counts exported to CSV file')
 
 monthly_total.to_csv('data/monthly_total.csv')
 print('monthly_total exported to CSV file')
