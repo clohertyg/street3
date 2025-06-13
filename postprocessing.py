@@ -7,8 +7,10 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 from pathlib import Path
 
-import pandas as pd
 import numpy as np
+import os
+from datawrapper import Datawrapper
+from dotenv import load_dotenv
 # from loguru import logger
 # from tqdm import tqdm
 
@@ -455,3 +457,5 @@ print('monthly_total exported to CSV file')
 
 yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
+
+
