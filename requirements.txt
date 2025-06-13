@@ -5,3 +5,8 @@ geopandas
 azure-storage-blob
 pyarrow
 datetime
+ssl
+pathlib
+os
+datawrapper
+dotenv
