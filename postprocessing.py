@@ -11,10 +11,6 @@ import numpy as np
 import os
 from datawrapper import Datawrapper
 from dotenv import load_dotenv
-# from loguru import logger
-# from tqdm import tqdm
-
-# from ln.config import PROCESSED_DATA_DIR
 
 
 def inc_data_read(start_year = 2014, full_dataset = True, convert_cook_crs = True):
@@ -459,3 +455,15 @@ yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
 
+# Datawrapper part
+API_KEY = os.environ['DATAWRAPPER_API_KEY']
+
+dw = Datawrapper(access_token=API_KEY)
+
+dw.get_my_account()
+chart_id = 'gjMTR'
+dw.update_description(
+    chart_id,
+    byline="Created via datawrapper API",
+)
+dw.publish_chart(chart_id, display = True)

@@ -8,6 +8,11 @@ on:
       - .github/workflows/flat.yml
       - ./postprocess.ts
 
+
+env:
+  DATAWRAPPER_API: ${{ secrets.DATAWRAPPER_API_KEY }}
+
+
 jobs:
   scheduled:
     runs-on: ubuntu-latest
