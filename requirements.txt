@@ -6,6 +6,5 @@ azure-storage-blob
 pyarrow
 datetime
 pathlib
-os
 datawrapper
 dotenv
