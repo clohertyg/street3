@@ -10,7 +10,7 @@ on:
 
 
 env:
-  DATAWRAPPER_API: ${{ secrets.DATAWRAPPER_API_KEY }}
+  DATAWRAPPER_API_KEY: ${{ secrets.DATAWRAPPER_API_KEY }}
 
 
 jobs:
