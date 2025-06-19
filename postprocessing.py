@@ -452,11 +452,23 @@ print('yearly_total_counts exported to CSV file')
 
 
 # Datawrapper part
+
 API_KEY = os.environ['DATAWRAPPER_API_KEY']
+
+if not API_KEY:
+    raise ValueError("Datawrapper API key not found in environment variables")
 
 dw = Datawrapper(access_token=API_KEY)
 
-dw.get_my_account()
+# dw.get_my_account()
+try:
+    user_info = dw.get_my_account()
+    print(f"Connected to Datawrapper as: {user_info['email']}")
+except Exception as e:
+    print("Failed to connect to Datawrapper:", e)
+    raise
+
+
 chart_id = 'gjMTR'
 dw.update_description(
     chart_id,
