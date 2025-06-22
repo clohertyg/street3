@@ -13,7 +13,6 @@ env:
   DATAWRAPPER_API_KEY: ${{ secrets.DATAWRAPPER_API_KEY }}
 
 
-
 jobs:
   scheduled:
     runs-on: ubuntu-latest
