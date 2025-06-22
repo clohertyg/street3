@@ -451,27 +451,29 @@ yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
 
-# Datawrapper part
+print("Attempting to load Datawrapper API key...")
+api_key = os.environ.get("DATAWRAPPER_API_KEY")
 
-API_KEY = os.environ['DATAWRAPPER_API_KEY']
+if not api_key:
+    raise ValueError("❌ DATAWRAPPER_API_KEY is not set in the environment!")
 
-if not API_KEY:
-    raise ValueError("Datawrapper API key not found in environment variables")
+print("API key found. Connecting to Datawrapper...")
+dw = Datawrapper(access_token=api_key)
 
-dw = Datawrapper(access_token=API_KEY)
-
-# dw.get_my_account()
 try:
-    user_info = dw.get_my_account()
-    print(f"Connected to Datawrapper as: {user_info['email']}")
+    chart_id = "gjMTR"
+    print("Adding data to chart...")
+    dw.add_data(chart_id, pd.read_csv("data/monthly_total.csv"))
+
+    print("Updating description...")
+    dw.update_description(chart_id, byline="Updated via GitHub Actions")
+
+    print("Publishing chart...")
+    dw.publish_chart(chart_id)
+
+    print("✅ Datawrapper chart updated successfully!")
+
 except Exception as e:
-    print("Failed to connect to Datawrapper:", e)
+    print("❌ Datawrapper update failed with error:")
+    print(e)
     raise
-
-
-chart_id = 'gjMTR'
-dw.update_description(
-    chart_id,
-    byline="Created via datawrapper API",
-)
-dw.publish_chart(chart_id, display = True)
