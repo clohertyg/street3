@@ -455,6 +455,7 @@ print("Attempting to load Datawrapper API key...")
 api_key = os.environ.get("DATAWRAPPER_API_KEY")
 
 if not api_key:
+    print("All environment vars:", os.environ.keys())
     raise ValueError("❌ DATAWRAPPER_API_KEY is not set in the environment!")
 
 print("API key found. Connecting to Datawrapper...")
