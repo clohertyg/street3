@@ -451,30 +451,22 @@ yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
 
-print("Attempting to load Datawrapper API key...")
+print("Step 1: Starting postprocessing")
+print("Step 2: Checking environment variables...")
+
+# Print a preview of environment keys
+for key in list(os.environ.keys())[:10]:  # first few keys for sanity
+    print(" - ", key)
+
+# Print exact presence of the expected one
+if "DATAWRAPPER_API_KEY" in os.environ:
+    print("DATAWRAPPER_API_KEY is in os.environ")
+else:
+    print("DATAWRAPPER_API_KEY is NOT in os.environ")
+
+# Show what you’re trying to read
 api_key = os.environ.get("DATAWRAPPER_API_KEY")
+print("api_key value length:", len(api_key) if api_key else "None")
 
 if not api_key:
-    print("All environment vars:", os.environ.keys())
-    raise ValueError("❌ DATAWRAPPER_API_KEY is not set in the environment!")
-
-print("API key found. Connecting to Datawrapper...")
-dw = Datawrapper(access_token=api_key)
-
-try:
-    chart_id = "gjMTR"
-    print("Adding data to chart...")
-    dw.add_data(chart_id, pd.read_csv("data/monthly_total.csv"))
-
-    print("Updating description...")
-    dw.update_description(chart_id, byline="Updated via GitHub Actions")
-
-    print("Publishing chart...")
-    dw.publish_chart(chart_id)
-
-    print("✅ Datawrapper chart updated successfully!")
-
-except Exception as e:
-    print("❌ Datawrapper update failed with error:")
-    print(e)
-    raise
+    raise ValueError("DATAWRAPPER_API_KEY is not set in the environment!")
