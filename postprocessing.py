@@ -450,23 +450,24 @@ print('monthly_total exported to CSV file')
 yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
+print("Loading API key")
+api_key = os.environ["DATAWRAPPER_API_KEY"]
+print("Connecting to Datawrapper")
+dw = Datawrapper(access_token=api_key)
 
-print("Step 1: Starting postprocessing")
-print("Step 2: Checking environment variables...")
+chart_id = 'gjMTR'
 
-# Print a preview of environment keys
-for key in list(os.environ.keys())[:10]:  # first few keys for sanity
-    print(" - ", key)
+print("Uploading new chart data")
+dw.add_data(chart_id, df=yearly_total)  # or monthly_total 
 
-# Print exact presence of the expected one
-if "DATAWRAPPER_API_KEY" in os.environ:
-    print("DATAWRAPPER_API_KEY is in os.environ")
-else:
-    print("DATAWRAPPER_API_KEY is NOT in os.environ")
+# update chart description
+n_diff = int(yearly_total.iloc[-1]['total_gun_poss_arrests'] - yearly_total.iloc[-1]['total_violent_arrests'])
+ratio = round(yearly_total.iloc[-1]['gp_ar'] / yearly_total.iloc[-1]['vi_ar'], 1) if yearly_total.iloc[-1]['vi_ar'] > 0 else 0
 
-# Show what you’re trying to read
-api_key = os.environ.get("DATAWRAPPER_API_KEY")
-print("api_key value length:", len(api_key) if api_key else "None")
+description = f"""In {yearly_total.iloc[-1]['year']}, CPD made <b style="background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;">{n_diff:,}</b> more gun possession arrests than violent arrests or <b style="background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;">{ratio}</b> gun possession arrests for every violent arrest."""
 
-if not api_key:
-    raise ValueError("DATAWRAPPER_API_KEY is not set in the environment!")
+print("Updating chart description")
+dw.update_description(chart_id, intro=description, byline="Created via GitHub Actions")
+
+print("Publishing chart")
+dw.publish_chart(chart_id)
