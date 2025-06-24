@@ -457,6 +457,11 @@ dw = Datawrapper(access_token=api_key)
 
 chart_id = 'gjMTR'
 
+print("Data preview for upload:")
+print(yearly_total.head())
+print("Columns:", yearly_total.columns.tolist())
+print("Shape:", yearly_total.shape)
+
 print("Uploading new chart data")
 dw.add_data(chart_id, df=yearly_total)  # or monthly_total 
 
