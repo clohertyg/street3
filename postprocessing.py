@@ -451,28 +451,32 @@ yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
 print("Loading API key")
-api_key = os.environ["DATAWRAPPER_API_KEY"]
-print("Connecting to Datawrapper")
-dw = Datawrapper(access_token=api_key)
+dw = Datawrapper(access_token=os.environ["DATAWRAPPER_API_KEY"])
 
 chart_id = 'gjMTR'
+dw.add_data(chart_id, yearly_total)
 
-print("Data preview for upload:")
-print(yearly_total.head())
-print("Columns:", yearly_total.columns.tolist())
-print("Shape:", yearly_total.shape)
+
 
 print("Uploading new chart data")
 dw.add_data(chart_id, df=yearly_total)  # or monthly_total 
 
-# update chart description
-n_diff = int(yearly_total.iloc[-1]['total_gun_poss_arrests'] - yearly_total.iloc[-1]['total_violent_arrests'])
-ratio = round(yearly_total.iloc[-1]['gp_ar'] / yearly_total.iloc[-1]['vi_ar'], 1) if yearly_total.iloc[-1]['vi_ar'] > 0 else 0
+print("Update chart description")
+latest_year = yearly_total["year"].max()
+latest_data = yearly_total[yearly_total["year"] == latest_year]
+extra_arrests = int(latest_data["total_gun_poss_arrests"].values[0] - latest_data["total_violent_arrests"].values[0])
+ratio = round(latest_data["gp_ar"].values[0] / latest_data["vi_ar"].values[0], 1)
 
-description = f"""In {yearly_total.iloc[-1]['year']}, CPD made <b style="background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;">{n_diff:,}</b> more gun possession arrests than violent arrests or <b style="background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;">{ratio}</b> gun possession arrests for every violent arrest."""
+caption_text = (
+    f"In {latest_year}, CPD made <b style='background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;'>"
+    f"{extra_arrests:,}</b> more gun possession arrests than violent arrests or "
+    f"<b style='background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;'>"
+    f"{ratio}</b> gun possession arrests for every violent arrest."
+)
 
-print("Updating chart description")
-dw.update_description(chart_id, intro=description, byline="Created via GitHub Actions")
+dw.update_description(chart_id, intro=caption_text)
+print("Description Updated")
 
-print("Publishing chart")
+
 dw.publish_chart(chart_id)
+print("Chart published")
