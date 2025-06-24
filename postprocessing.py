@@ -450,13 +450,21 @@ print('monthly_total exported to CSV file')
 yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
+# checking token
+key = os.environ.get("DATAWRAPPER_API_KEY")
+print("Key exists:", key is not None)
+print("Key length:", len(key) if key else "N/A")
+
+dw = Datawrapper(access_token=key)
+account = dw.get_my_account()
+print("Connected to Datawrapper account:", account['email'])
+
+
+
 print("Loading API key")
 dw = Datawrapper(access_token=os.environ["DATAWRAPPER_API_KEY"])
 
 chart_id = 'gjMTR'
-dw.add_data(chart_id, yearly_total)
-
-
 
 print("Uploading new chart data")
 dw.add_data(chart_id, df=yearly_total)  # or monthly_total 
