@@ -451,40 +451,46 @@ yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
 # checking token
-key = os.environ.get("DATAWRAPPER_API_KEY")
-print("Key exists:", key is not None)
-print("Key length:", len(key) if key else "N/A")
+print("🔑 Loading API key")
+API_KEY = os.environ.get("DATAWRAPPER_API_KEY")
+print("Key exists:", API_KEY is not None)
+print("Key length:", len(API_KEY))
 
-dw = Datawrapper(access_token=key)
+dw = Datawrapper(access_token=API_KEY)
+
+print("👤 Connecting to Datawrapper account...")
 account = dw.get_my_account()
-print("Connected to Datawrapper account:", account['email'])
+print("✅ Connected to account:", account['email'])
 
+# === STEP 1: Upload your real data ===
+chart_id = 'gjMTR'  # Replace with your actual chart ID
 
+print("📤 Uploading yearly_total to Datawrapper chart...")
+dw.add_data(chart_id, yearly_total)
 
-print("Loading API key")
-dw = Datawrapper(access_token=os.environ["DATAWRAPPER_API_KEY"])
-
-chart_id = 'gjMTR'
-
-print("Uploading new chart data")
-dw.add_data(chart_id, df=yearly_total)  # or monthly_total 
-
-print("Update chart description")
+# === STEP 2: Update dynamic description ===
 latest_year = yearly_total["year"].max()
 latest_data = yearly_total[yearly_total["year"] == latest_year]
-extra_arrests = int(latest_data["total_gun_poss_arrests"].values[0] - latest_data["total_violent_arrests"].values[0])
-ratio = round(latest_data["gp_ar"].values[0] / latest_data["vi_ar"].values[0], 1)
+
+extra_arrests = int(
+    latest_data["total_gun_poss_arrests"].values[0] - latest_data["total_violent_arrests"].values[0]
+)
+ratio = round(
+    latest_data["gp_ar"].values[0] / latest_data["vi_ar"].values[0], 1
+)
 
 caption_text = (
     f"In {latest_year}, CPD made <b style='background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;'>"
-    f"{extra_arrests:,}</b> more gun possession arrests than violent arrests or "
+    f"{extra_arrests:,}</b> more gun possession arrests than violent arrests, or "
     f"<b style='background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;'>"
     f"{ratio}</b> gun possession arrests for every violent arrest."
 )
 
+print("📝 Updating chart description...")
 dw.update_description(chart_id, intro=caption_text)
-print("Description Updated")
 
-
+# === STEP 3: Publish the chart ===
+print("🚀 Publishing chart...")
 dw.publish_chart(chart_id)
-print("Chart published")
+
+print("✅ Chart updated and published successfully.")
