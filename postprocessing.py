@@ -470,11 +470,12 @@ latest = yearly_total[yearly_total["year"] == latest_year]
 
 gp_arrests = int(latest["total_gun_poss_arrests"])
 vi_arrests = int(latest["total_violent_arrests"])
+gp_vi_diff = gp_arrests - vi_arrests
 ratio = round(gp_arrests / vi_arrests, 1)
 
 caption_yearly = (
     f"In {latest_year}, CPD made "
-    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{(gp_arrests:,) - (vi_arrests:,)}</b> "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_vi_diff}</b> "
     f"more gun possession arrests than violent arrests, or "
     f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{ratio}</b> "
     f"gun possession arrests for every violent arrest."
