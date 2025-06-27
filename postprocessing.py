@@ -450,47 +450,61 @@ print('monthly_total exported to CSV file')
 yearly_total.to_csv('data/yearly_total.csv')
 print('yearly_total_counts exported to CSV file')
 
-# checking token
-print("🔑 Loading API key")
-API_KEY = os.environ.get("DATAWRAPPER_API_KEY")
-print("Key exists:", API_KEY is not None)
-print("Key length:", len(API_KEY))
+
+# API Key
+API_KEY = os.getenv("DATAWRAPPER_API_KEY")
+if not API_KEY:
+    raise ValueError("DATAWRAPPER_API_KEY is not set in the environment")
 
 dw = Datawrapper(access_token=API_KEY)
+chart_id = 'gjMTR' 
 
-print("👤 Connecting to Datawrapper account...")
-account = dw.get_my_account()
-print("✅ Connected to account:", account['email'])
+# YEARLY ARRESTS CHART
+yearly_chart_id = 'gjMTR'
+print("uploading yearly_total to chart")
+dw.add_data(yearly_chart_id, yearly_total)
 
-# === STEP 1: Upload your real data ===
-chart_id = 'gjMTR'  # Replace with your actual chart ID
-
-print("📤 Uploading yearly_total to Datawrapper chart...")
-dw.add_data(chart_id, yearly_total)
-
-# === STEP 2: Update dynamic description ===
+# update chart description
 latest_year = yearly_total["year"].max()
-latest_data = yearly_total[yearly_total["year"] == latest_year]
+latest = yearly_total[yearly_total["year"] == latest_year].iloc[0]
 
-extra_arrests = int(
-    latest_data["total_gun_poss_arrests"].values[0] - latest_data["total_violent_arrests"].values[0]
-)
-ratio = round(
-    latest_data["gp_ar"].values[0] / latest_data["vi_ar"].values[0], 1
-)
+gp_arrests = int(latest["total_gun_poss_arrests"])
+vi_arrests = int(latest["total_violent_arrests"])
+ratio = round(gp_arrests / vi_arrests, 1)
 
-caption_text = (
-    f"In {latest_year}, CPD made <b style='background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;'>"
-    f"{extra_arrests:,}</b> more gun possession arrests than violent arrests, or "
-    f"<b style='background-color: rgb(0 174 255); padding-left: 4px;color:white; padding-right: 3px;'>"
-    f"{ratio}</b> gun possession arrests for every violent arrest."
+caption_yearly = (
+    f"In {latest_year}, CPD made "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_arrests:,}</b> "
+    f"gun possession arrests and "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{ratio}</b> "
+    f"gun possession arrests for every violent arrest."
 )
 
-print("📝 Updating chart description...")
-dw.update_description(chart_id, intro=caption_text)
+dw.update_description(yearly_chart_id, intro=caption_yearly)
+dw.publish_chart(yearly_chart_id)
+print("Chart updated and published.")
 
-# === STEP 3: Publish the chart ===
-print("🚀 Publishing chart...")
-dw.publish_chart(chart_id)
+# MONTHLY ARRESTS CHART
+monthly_chart_id = 'Wcvzf'
+print('Uploading monthly_total to Datawrapper')
+dw.add_data(monthly_chart_id, monthly_total)
 
-print("✅ Chart updated and published successfully.")
+latest_month = monthly_total.iloc[-1]
+month_label = latest_month["year-month"]
+gp_monthly = int(latest_month["total_gun_poss_arrests"])
+vi_monthly = int(latest_month["total_violent_arrests"])
+ratio_monthly = round(gp_monthly / vi_monthly, 1) if vi_monthly > 0 else "N/A"
+
+caption_monthly = (
+    f"As of {month_label}, CPD made "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_monthly:,}</b> "
+    f"gun possession arrests and "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{ratio_monthly}</b> "
+    f"gun possession arrests for every violent arrest that month."
+)
+
+print('Updating monthly chart description')
+dw.update_description(monthly_chart_id, intro=caption_monthly)
+print('Publishing monthly chart')
+dw.publish_chart(monthly_chart_id)
+print('Monthly chart updated')
