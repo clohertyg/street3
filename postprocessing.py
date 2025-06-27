@@ -465,8 +465,8 @@ print("uploading yearly_total to chart")
 dw.add_data(yearly_chart_id, yearly_total)
 
 # update chart description
-latest_year = yearly_total["year"].max()
-latest = yearly_total[yearly_total["year"] == latest_year].iloc[0]
+latest_year = sorted(yearly_total["year"].unique())[-2]
+latest = yearly_total[yearly_total["year"] == latest_year]
 
 gp_arrests = int(latest["total_gun_poss_arrests"])
 vi_arrests = int(latest["total_violent_arrests"])
@@ -484,23 +484,24 @@ dw.update_description(yearly_chart_id, intro=caption_yearly)
 dw.publish_chart(yearly_chart_id)
 print("Chart updated and published.")
 
+
+
 # MONTHLY ARRESTS CHART
 monthly_chart_id = 'Wcvzf'
 print('Uploading monthly_total to Datawrapper')
 dw.add_data(monthly_chart_id, monthly_total)
 
-latest_month = monthly_total.iloc[-1]
-month_label = latest_month["year-month"]
-gp_monthly = int(latest_month["total_gun_poss_arrests"])
-vi_monthly = int(latest_month["total_violent_arrests"])
-ratio_monthly = round(gp_monthly / vi_monthly, 1) if vi_monthly > 0 else "N/A"
+latest_year_data = monthly_total[monthly_total["year"]== latest_year]
+gp_month_total = int(latest_year_data["total_gun_poss_arrests"].sum())
+vi_month_total = int(latest_year_data["total_violent_arrests"].sum())
+ratio_month_total = round(gp_month_total / vi_month_total, 1) if vi_month_total > 0 else "N/A"
 
 caption_monthly = (
-    f"As of {month_label}, CPD made "
-    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_monthly:,}</b> "
+    f"As of {latest_year}, CPD made "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_month_total:,}</b> "
     f"gun possession arrests and "
-    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{ratio_monthly}</b> "
-    f"gun possession arrests for every violent arrest that month."
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{ratio_month_total}</b> "
+    f"gun possession arrests for every violent arrest that year (monthly data aggregated)."
 )
 
 print('Updating monthly chart description')
