@@ -523,7 +523,12 @@ dw.add_data(m_vi_ar_id, monthly_total)
 
 # update chart description
 
-# 2014 violent arrest rate
+# 2014 arrest rate
+m_start_rate = monthly_total[monthly_total["year-month"] == "2014-01"]["vi_ar"].iloc[0]
+m_end_rate = monthly_total[monthly_total["year"] == latest_year]["vi_ar"].iloc[-1] # most recent full year arrest rate
+m_drop = round(m_start_rate - m_end_rate, 1)
+
+
 m_vi_ar_cap = (
     f"Since 2014, the Chicago Police's arrest rate for violent crime dropped from "
     f"<b style='background-color: #ffc800; padding: 0 4px;'>{round(m_start_rate)}%</b> to "
