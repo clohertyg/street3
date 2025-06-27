@@ -468,8 +468,8 @@ dw.add_data(yearly_chart_id, yearly_total)
 latest_year = sorted(yearly_total["year"].unique())[-2]
 latest = yearly_total[yearly_total["year"] == latest_year]
 
-gp_arrests = int(latest["total_gun_poss_arrests"])
-vi_arrests = int(latest["total_violent_arrests"])
+gp_arrests = int(latest["total_gun_poss_arrests"].iloc[0])
+vi_arrests = int(latest["total_violent_arrests"].iloc[0])
 gp_vi_diff = gp_arrests - vi_arrests
 ratio = round(gp_arrests / vi_arrests, 1)
 
@@ -482,8 +482,9 @@ caption_yearly = (
 )
 
 dw.update_description(yearly_chart_id, intro=caption_yearly)
+print('Updating yearly chart.')
 dw.publish_chart(yearly_chart_id)
-print("Chart updated and published.")
+print("Yearly chart updated and published.")
 
 
 
@@ -492,10 +493,13 @@ monthly_chart_id = 'Wcvzf'
 print('Uploading monthly_total to Datawrapper')
 dw.add_data(monthly_chart_id, monthly_total)
 
-latest_year_data = monthly_total[monthly_total["year"]== latest_year]
-gp_month_total = int(latest_year_data["total_gun_poss_arrests"].sum())
-vi_month_total = int(latest_year_data["total_violent_arrests"].sum())
-ratio_month_total = round(gp_month_total / vi_month_total, 1) if vi_month_total > 0 else "N/A"
+
+# technically dont use this since there is no dynamic caption here
+# keeping it in case we want to update in the future
+latest_month_data = monthly_total[monthly_total["year"] == latest_year]
+gp_month_total = int(latest_month_data["total_gun_poss_arrests"].sum())
+vi_month_total = int(latest_month_data["total_violent_arrests"].sum())
+ratio_month_total = round(gp_month_total / vi_month_total, 1)
 
 caption_monthly = (
     f"After 2016, gun possession arrests started to outpace violent arrests each month. "
@@ -520,11 +524,6 @@ dw.add_data(m_vi_ar_id, monthly_total)
 # update chart description
 
 # 2014 violent arrest rate
-m_start_rate = monthly_total[monthly_total["year-month"] == "2014-01"]["vi_ar"].values[0]
-m_end_rate = monthly_total[monthly_total["year"] == latest_year_data]["vi_ar"].iloc[-1]
-m_drop = round(start_rate - end_rate, 1)
-
-
 m_vi_ar_cap = (
     f"Since 2014, the Chicago Police's arrest rate for violent crime dropped from "
     f"<b style='background-color: #ffc800; padding: 0 4px;'>{round(m_start_rate)}%</b> to "
@@ -546,9 +545,9 @@ dw.add_data(y_vi_ar_id, yearly_total)
 # update chart description
 
 # 2014 violent arrest rate
-y_start_rate = yearly_total[yearly_total["year"] == "2014"]["vi_ar"].values[0]
-y_end_rate = latest["vi_ar"].iloc[-1]
-y_drop = round(start_rate - end_rate, 1)
+y_start_rate = yearly_total[yearly_total["year"] == 2014]["vi_ar"].iloc[0]
+y_end_rate = latest["vi_ar"].iloc[0]
+y_drop = round(y_start_rate - y_end_rate, 1)
 
 
 y_vi_ar_cap = (
