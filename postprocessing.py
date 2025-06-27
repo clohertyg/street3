@@ -457,7 +457,7 @@ if not API_KEY:
     raise ValueError("DATAWRAPPER_API_KEY is not set in the environment")
 
 dw = Datawrapper(access_token=API_KEY)
-chart_id = 'gjMTR' 
+
 
 # YEARLY ARRESTS CHART
 yearly_chart_id = 'gjMTR'
@@ -475,7 +475,7 @@ ratio = round(gp_arrests / vi_arrests, 1)
 
 caption_yearly = (
     f"In {latest_year}, CPD made "
-    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_vi_diff}</b> "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_vi_diff:,}</b> "
     f"more gun possession arrests than violent arrests, or "
     f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{ratio}</b> "
     f"gun possession arrests for every violent arrest."
@@ -498,7 +498,7 @@ vi_month_total = int(latest_year_data["total_violent_arrests"].sum())
 ratio_month_total = round(gp_month_total / vi_month_total, 1) if vi_month_total > 0 else "N/A"
 
 caption_monthly = (
-    f"After 2016, gun possession arrests started to outpace violent arrests each month.vi_arrests.vi_arrests."
+    f"After 2016, gun possession arrests started to outpace violent arrests each month. "
     f"This difference is most prominent in May 2022, when CPD made four gun possession arrests for every one violent arrest."
     )
 
@@ -507,3 +507,59 @@ dw.update_description(monthly_chart_id, intro=caption_monthly)
 print('Publishing monthly chart')
 dw.publish_chart(monthly_chart_id)
 print('Monthly chart updated')
+
+
+# ARREST RATE CHARTS
+
+# MONTHLY VIOLENT ARREST RATE
+
+m_vi_ar_id = 'icuvq'
+print("uploading monthly_total to chart")
+dw.add_data(m_vi_ar_id, monthly_total)
+
+# update chart description
+
+# 2014 violent arrest rate
+m_start_rate = monthly_total[monthly_total["year-month"] == "2014-01"]["vi_ar"].values[0]
+m_end_rate = monthly_total[monthly_total["year"] == latest_year_data]["vi_ar"].iloc[-1]
+m_drop = round(start_rate - end_rate, 1)
+
+
+m_vi_ar_cap = (
+    f"Since 2014, the Chicago Police's arrest rate for violent crime dropped from "
+    f"<b style='background-color: #ffc800; padding: 0 4px;'>{round(m_start_rate)}%</b> to "
+    f"<b style='background-color: #ffc800; padding: 0 4px;'>{round(m_end_rate)}%</b> — a decrease of "
+    f"<b style='background-color: #ffc800; padding: 0 4px;'>{m_drop}%</b>."
+)
+
+dw.update_description(m_vi_ar_id, intro=m_vi_ar_cap)
+dw.publish_chart(m_vi_ar_id)
+print("Chart updated and published.")
+
+
+# YEARLY VIOLENT ARREST RATE
+
+y_vi_ar_id = 't4b8K'
+print("uploading yearly_total to chart")
+dw.add_data(y_vi_ar_id, yearly_total)
+
+# update chart description
+
+# 2014 violent arrest rate
+y_start_rate = yearly_total[yearly_total["year"] == "2014"]["vi_ar"].values[0]
+y_end_rate = latest["vi_ar"].iloc[-1]
+y_drop = round(start_rate - end_rate, 1)
+
+
+y_vi_ar_cap = (
+    f"Since 2014, the Chicago Police's arrest rate for violent crime dropped from "
+    f"<b style='background-color: #ffc800; padding: 0 4px;'>{round(y_start_rate)}%</b> to "
+    f"<b style='background-color: #ffc800; padding: 0 4px;'>{round(y_end_rate)}%</b> — a decrease of "
+    f"<b style='background-color: #ffc800; padding: 0 4px;'>{y_drop}%</b>."
+)
+
+dw.update_description(y_vi_ar_id, intro=y_vi_ar_cap)
+dw.publish_chart(y_vi_ar_id)
+print("Chart updated and published.")
+
+
