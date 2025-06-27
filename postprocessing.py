@@ -474,7 +474,7 @@ ratio = round(gp_arrests / vi_arrests, 1)
 
 caption_yearly = (
     f"In {latest_year}, CPD made "
-    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{(gp_arrests:) - (vi_arrests:),}</b> "
+    f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{gp_arrests:, - vi_arrests:,}</b> "
     f"more gun possession arrests than violent arrests, or "
     f"<b style='background-color: rgb(0 174 255); padding: 0 4px; color:white;'>{ratio}</b> "
     f"gun possession arrests for every violent arrest."
