@@ -567,3 +567,34 @@ dw.publish_chart(y_vi_ar_id)
 print("Chart updated and published.")
 
 
+### 3 YEAR ROLLING AVERAGES ###
+# filter only full years 
+latest_full_year = monthly_total["year"].max() - 1
+full_years = monthly_total[monthly_total["year"] <= latest_full_year]
+
+# yearly totals
+yearly_counts = full_years.groupby("year").agg(
+    total_vi_arrs = ("total_violent_arrests", "sum"),
+    total_gp_arrs = ("total_gun_poss_arrests", "sum")
+). reset_index()
+
+# calculate ratio
+yearly_counts["gp_to_vi_ratio"] = (
+    yearly_counts["total_gp_arrs"] / yearly_counts["total_vi_arrs"]
+).round(2)
+
+# calculate rolling 3year averages
+yearly_counts["violent_arrests_3yr_avg"] = (
+    yearly_counts["total_vi_arrs"].rolling(window=3).mean()
+).round(2)
+yearly_counts["gun_arrests_3yr_avg"] = (
+    yearly_counts["total_gp_arrs"].rolling(window=3).mean()
+).round(2)
+yearly_counts["ratio_3yr_avg"] = (
+    yearly_counts["gp_to_vi_ratio"].rolling(window=3).mean()
+).round(2)
+
+# DATAWRAPPER
+roll_id = 'Sfdp9'
+print("uploading yearly_counts to chart")
+dw.add_data(roll_id, yearly_counts)
