@@ -598,3 +598,5 @@ yearly_counts["ratio_3yr_avg"] = (
 roll_id = 'Sfdp9'
 print("uploading yearly_counts to chart")
 dw.add_data(roll_id, yearly_counts)
+dw.publish_chart(roll_id)
+print("Chart updated and published.")
