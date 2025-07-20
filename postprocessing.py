@@ -595,11 +595,11 @@ yearly_counts["ratio_3yr_avg"] = (
 ).round(2)
 
 # dropping first two rows since they don't have full 3yr avgs calculated
-yearly_counts.drop([0, 1], inplace=True)
+yearly_counts2 = yearly_counts.drop([0, 1], inplace=True)
 
 # DATAWRAPPER
 roll_id = 'Sfdp9'
 print("uploading yearly_counts to chart")
-dw.add_data(roll_id, yearly_counts)
+dw.add_data(roll_id, yearly_counts2)
 dw.publish_chart(roll_id)
 print("Chart updated and published.")
