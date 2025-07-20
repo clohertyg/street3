@@ -594,6 +594,9 @@ yearly_counts["ratio_3yr_avg"] = (
     yearly_counts["gp_to_vi_ratio"].rolling(window=3).mean()
 ).round(2)
 
+# dropping first two rows since they don't have full 3yr avgs calculated
+yearly_counts.drop([0, 1], inplace=True)
+
 # DATAWRAPPER
 roll_id = 'Sfdp9'
 print("uploading yearly_counts to chart")
