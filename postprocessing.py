@@ -568,6 +568,7 @@ print("Chart updated and published.")
 
 
 ### 3 YEAR ROLLING AVERAGES ###
+
 # filter only full years 
 latest_full_year = monthly_total["year"].max() - 1
 full_years = monthly_total[monthly_total["year"] <= latest_full_year]
@@ -595,12 +596,13 @@ yearly_counts["ratio_3yr_avg"] = (
 ).round(2)
 
 # dropping first two rows since they don't have full 3yr avgs calculated
-yearly_counts2 = yearly_counts.dropna()
-print(yearly_counts2)
+three_yr_avgs = yearly_counts.dropna()
+three_yr_avgs.to_csv('data/three_yr_avgs.csv')
+print('three_yr_avgs exported to CSV file')
 
 # DATAWRAPPER
 roll_id = 'Sfdp9'
-print("uploading yearly_counts2 to chart")
-dw.add_data(roll_id, yearly_counts2)
-dw.publish_chart(roll_id)
-print("Chart updated and published.")
+print("uploading three_yr_avgs to chart")
+dw.add_data(roll_id, three_yr_avgs)
+print("three_yr_avgs is added to chart")
+
