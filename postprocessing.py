@@ -595,7 +595,7 @@ yearly_counts["ratio_3yr_avg"] = (
 ).round(2)
 
 # dropping first two rows since they don't have full 3yr avgs calculated
-yearly_counts2 = yearly_counts.drop([0, 1], inplace=True)
+yearly_counts2 = yearly_counts.iloc[2:] 
 
 # DATAWRAPPER
 roll_id = 'Sfdp9'
