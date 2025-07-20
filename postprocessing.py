@@ -596,7 +596,7 @@ yearly_counts["ratio_3yr_avg"] = (
 ).round(2)
 
 # dropping first two rows since they don't have full 3yr avgs calculated
-three_yr_avgs = yearly_counts.dropna()
+three_yr_avgs = yearly_counts.iloc[2:] 
 three_yr_avgs.to_csv('data/three_yr_avgs.csv')
 print('three_yr_avgs exported to CSV file')
 
