@@ -597,7 +597,7 @@ yearly_counts["ratio_3yr_avg"] = (
 
 # dropping first two rows since they don't have full 3yr avgs calculated
 three_yr_avgs = yearly_counts.iloc[2:] 
-print(three_yr_avgs)
+print(three_yr_avgs.iloc[:, -3:])
 three_yr_avgs.to_csv('data/three_yr_avgs.csv')
 print('three_yr_avgs exported to CSV file')
 
@@ -607,3 +607,32 @@ print("uploading three_yr_avgs to chart")
 dw.add_data(roll_id, three_yr_avgs)
 print("three_yr_avgs is added to chart")
 
+
+### MONTH-TO-MONTH COMPARISONS, YEAR OVER YEAR ###
+
+mtm_ch = monthly_total.copy()
+mtm_ch['year-month'] = pd.to_datetime(mtm_ch['year-month'])
+
+mtm_ch['year'] =mtm_ch['year-month'].dt.year
+mtm_ch['month'] = mtm_ch['year-month'].dt.month
+mtm_ch['month_name'] = mtm_ch['year-month'].dt.strftime('%b') 
+
+mtm_ch = mtm_ch.sort_values(by=['month', 'year'])
+
+ordered_cols = ['month', 'month_name', 'year'] + [col for col in mtm_ch.columns if col not in ['year', 'month', 'month_name', 'year-month']]
+mtm_ch = mtm_ch[ordered_cols]
+
+# YoY CHANGE
+mtm_ch['violent_count_yoy_change'] = mtm_ch.groupby('month')['total_violent_count'].diff()
+mtm_ch['violent_count_yoy_pct'] = mtm_ch.groupby('month')['total_violent_count'].pct_change() * 100
+
+mtm_ch['gun_poss_count_yoy_change'] = mtm_ch.groupby('month')['total_gun_poss_count'].diff()
+mtm_ch['gun_poss_count_yoy_pct'] = mtm_ch.groupby('month')['total_gun_poss_count'].pct_change() * 100
+
+mtm_ch['vi_ar_yoy_change'] = mtm_ch.groupby('month')['vi_ar'].diff()
+mtm_ch['gp_ar_yoy_change'] = mtm_ch.groupby('month')['gp_ar'].diff()
+
+
+
+mtm_ch.to_csv('data/mtm_ch.csv')
+print('mtm_ch exported to CSV file')
