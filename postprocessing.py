@@ -617,22 +617,16 @@ mtm_ch['year'] =mtm_ch['year-month'].dt.year
 mtm_ch['month'] = mtm_ch['year-month'].dt.month
 mtm_ch['month_name'] = mtm_ch['year-month'].dt.strftime('%b') 
 
-mtm_ch = mtm_ch.sort_values(by=['month', 'year'])
+vi_co_pivot = mtm_ch.pivot(index='year', columns='month_name', values='total_violent_count')
+month_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+vi_co_pivot = vi_co_pivot[month_order]
 
-ordered_cols = ['month', 'month_name', 'year'] + [col for col in mtm_ch.columns if col not in ['year', 'month', 'month_name', 'year-month']]
-mtm_ch = mtm_ch[ordered_cols]
-
-# YoY CHANGE
-mtm_ch['violent_count_yoy_change'] = mtm_ch.groupby('month')['total_violent_count'].diff()
-mtm_ch['violent_count_yoy_pct'] = mtm_ch.groupby('month')['total_violent_count'].pct_change() * 100
-
-mtm_ch['gun_poss_count_yoy_change'] = mtm_ch.groupby('month')['total_gun_poss_count'].diff()
-mtm_ch['gun_poss_count_yoy_pct'] = mtm_ch.groupby('month')['total_gun_poss_count'].pct_change() * 100
-
-mtm_ch['vi_ar_yoy_change'] = mtm_ch.groupby('month')['vi_ar'].diff()
-mtm_ch['gp_ar_yoy_change'] = mtm_ch.groupby('month')['gp_ar'].diff()
+gp_co_pivot = mtm_ch.pivot(index='year', columns='month_name', values='total_gun_poss_count')
+gp_co_pivot = gp_co_pivot[month_order]
 
 
-
-mtm_ch.to_csv('data/mtm_ch.csv')
-print('mtm_ch exported to CSV file')
+vi_co_pivot.to_csv('data/vi_co_pivot.csv')
+print('vi_co_pivot exported to CSV file')
+gp_co_pivot.to_csv('data/gp_co_pivot.csv')
+print('gp_co_pivots exported to CSV file')
